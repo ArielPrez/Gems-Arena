@@ -139,76 +139,105 @@ window.onload = function(){
       circle(gemSelected.positionX,gemSelected.positionY);
       clickCounter++;
     }else{
-      gemToChange = Move(panel,gemSelected,gemToChange,gemIndex);
+      var isARow = checkGems(panel,gemSelected,gemToChange,gemIndex);
       clickCounter = 0;
     }
-    var isARow = checkGems(panel,gemSelected,gemIndex);
+    // var isARow = checkGems(panel,gemSelected,gemIndex);
     
   },false);
 
 
 };
 
-function Move(panel,gemSelected,gemToChange,gemIndex){
-  if((panel[gemIndex+1].name || panel[gemIndex-1].name || panel[gemIndex+5].name || panel[gemIndex-5].name) === gemToChange.name){
-    console.log("Son dos gemas consecutivas");
-  }
+// function Move(panel,gemSelected,gemToChange,gemIndex){
+  
+//   if((panel[gemIndex+1].name || panel[gemIndex-1].name || panel[gemIndex+5].name || panel[gemIndex-5].name) === gemToChange.name){
+//     console.log("Son dos gemas consecutivas");
+//   }
 
 
-  if(gemSelected != gemToChange)
-    gemToChange = gemSelected;
+//   if(gemSelected != gemToChange)
+//     gemToChange = gemSelected;
 
 
-  return gemToChange;
-}
+//   return gemToChange;
+// }
 
-function checkGems(panel,gemSelected,gemIndex){
+// CHECK THE GEMS NEAR THE "gemSelected"
+function checkGems(panel,gemSelected,gemToChange,gemIndex){
   let gemConsecutiveX = 0;
   let gemConsecutiveY = 0;
   let isARow = "";
 
   console.log(gemSelected.name + " - " + gemIndex);
     console.log(gemSelected);
-    if( (gemIndex + 1) < panel.length && panel[gemIndex+1].name === gemSelected.name){
-      gemConsecutiveX++;
-      if( (gemIndex + 2) < panel.length && panel[gemIndex+2].name === gemSelected.name){
-        gemConsecutiveX++;
-        console.log("Hay 3 gemas hacia la derecha consecutivas por eliminar");
+    // CHECK TO THE RIGHT
+    for (let i = 1; i < 5; i++) {
+      if( (gemIndex + i) < panel.length && panel[gemIndex+i] === gemSelected){
+          gemConsecutiveX++;
+      }  
+    }
+    // CHECK TO THE LEFT
+    for(let i = 1; i < 5; i++){
+      if( (gemIndex - i) >= 0 && panel[gemIndex-i] === gemSelected){
+          gemConsecutiveX++;
       }
     }
-    if( (gemIndex - 1) >= 0 && panel[gemIndex-1].name === gemSelected.name){
-      gemConsecutiveX++;
-      if( (gemIndex - 2) >= 0 && panel[gemIndex-2].name === gemSelected.name){
-        gemConsecutiveX++;
-        console.log("Hay 3 gemas hacia la izquierda consecutivas por eliminar");
+    // CHECK TO DOWN
+    for (let i = 5; i < panel.length; i+=5) {
+      if( (gemIndex + i) >= 0 && panel[gemIndex+i] === gemSelected){
+          gemConsecutiveY++;
+      }  
+    }
+    // CHECK TO UP
+    for(let i = 5; i < panel.length; i+=5){
+      if( (gemIndex - i) >= 0 && panel[gemIndex-i] === gemSelected){
+          gemConsecutiveY++;
       }
     }
-    if( (gemIndex - 5) >= 0 && panel[gemIndex-5].name === gemSelected.name){
-      gemConsecutiveY++;
-      if( (gemIndex - 10) >= 0 && panel[gemIndex-10].name === gemSelected.name){
-        gemConsecutiveY++;
-        console.log("Hay 3 gemas hacia arriba consecutivas por eliminar");
-      }
-    } 
-    if( (gemIndex + 5) < panel.length && panel[gemIndex+5].name === gemSelected.name){
-      gemConsecutiveY++;
-      if( (gemIndex + 10) < panel.length && panel[gemIndex+10].name === gemSelected.name){
-        gemConsecutiveY++;
-        console.log("Hay 3 gemas hacia abajo consecutivas por eliminar");
-      }
-    }
+
       console.log("X: "+gemConsecutiveX +" and Y: "+gemConsecutiveY);
       if(gemConsecutiveX >= 2){
-        console.log("Existen 3 gemas horizontales consecutivas por puntuar.");
+        console.log("Existen mas de 2 gemas horizontales consecutivas por puntuar.");
 
       }
       if(gemConsecutiveY >= 2){
-        console.log("Existen 3 gemas verticales consecutivas por puntuar.");
+        console.log("Existen mas de 2 gemas verticales consecutivas por puntuar.");
       }
 
       return isARow;
 }
 
+
+// CODE FOR CHECK THE GEMS
+// if( (gemIndex + 1) < panel.length && panel[gemIndex+1].name === gemSelected.name){
+//   gemConsecutiveX++;
+//   if( (gemIndex + 2) < panel.length && panel[gemIndex+2].name === gemSelected.name){
+//     gemConsecutiveX++;
+//     console.log("Hay 3 gemas hacia la derecha consecutivas por eliminar");
+//   }
+// }
+// if( (gemIndex - 1) >= 0 && panel[gemIndex-1].name === gemSelected.name){
+//   gemConsecutiveX++;
+//   if( (gemIndex - 2) >= 0 && panel[gemIndex-2].name === gemSelected.name){
+//     gemConsecutiveX++;
+//     console.log("Hay 3 gemas hacia la izquierda consecutivas por eliminar");
+//   }
+// }
+// if( (gemIndex - 5) >= 0 && panel[gemIndex-5].name === gemSelected.name){
+//   gemConsecutiveY++;
+//   if( (gemIndex - 10) >= 0 && panel[gemIndex-10].name === gemSelected.name){
+//     gemConsecutiveY++;
+//     console.log("Hay 3 gemas hacia arriba consecutivas por eliminar");
+//   }
+// } 
+// if( (gemIndex + 5) < panel.length && panel[gemIndex+5].name === gemSelected.name){
+//   gemConsecutiveY++;
+//   if( (gemIndex + 10) < panel.length && panel[gemIndex+10].name === gemSelected.name){
+//     gemConsecutiveY++;
+//     console.log("Hay 3 gemas hacia abajo consecutivas por eliminar");
+//   }
+// }
 
 // GENERA UNA MATRIZ DE DIFERENTES COLORES
   // // ctx.fillRect(0,0,50,50);
