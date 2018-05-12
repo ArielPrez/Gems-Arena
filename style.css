@@ -1,0 +1,45 @@
+*{
+  margin: 0;
+  padding: 0;
+  background-color: #2a3436;
+}
+.info{
+  height: 100px;
+  width: 100%;
+  float: left;
+  /* border: 1px solid gray; */
+}
+.gems{
+  float: left;
+  /* z-index: 0; */
+  /* width: 400px; */
+  /* height: 400px; */
+}
+.character1{
+  float: left;
+  /* z-index: 1; */
+  /* width: 370px; */
+  /* height: 500px; */
+  /* border: 1px solid gray; */
+}
+.character2{
+  float: left;
+  /* width: 370px; */
+  /* height: 500px; */
+  /* border: 1px solid gray; */
+}
+div{
+  width: 33.33%;
+  /* height: auto; */
+}
+/* .clearfix {
+  overflow: auto;
+  clear: both;
+} */
+img{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  /* text-align: center; */
+}
