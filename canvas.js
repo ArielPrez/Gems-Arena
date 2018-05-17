@@ -25,10 +25,14 @@ var characters = [
   let panel = [];
   let gemSelected = [];
   let gemToChange = [];
+  let gemDelete = [];
   let gemIndex;
   let indexToChange;
   let clickCounter = 0;
+  let isARow = false;
+  let isAColumn = false;
   const calculation = Math.floor(Math.floor(document.getElementById('myBody').offsetWidth / 3)/5);
+  // PANEL GRAPHIC DIMENTION - 
   const x_dimention = 5;
   const y_dimention = 5;
 
@@ -61,7 +65,7 @@ function startGame(params) {
 
   // ADD EVENT LISTENER FOR CLICK EVENTS
   canvas.addEventListener('click',function(event){
-    console.log("PANEL", panel);
+    // console.log("PANEL", panel);
     // console.log('EVENT: X - ', event.offsetX + '   Y - ', event.offsetY );
     mouse.x = event.offsetX;
     mouse.y = event.offsetY;
@@ -81,9 +85,32 @@ function startGame(params) {
       circle(gemSelected.positionX,gemSelected.positionY);
       clickCounter++;
     }else{
-      circle(gemSelected.positionX,gemSelected.positionY);
-      moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange);
-      // var isARow = checkGems(panel,gemSelected,gemToChange,gemIndex,indexToChange);
+		circle(gemSelected.positionX,gemSelected.positionY);
+		
+		if(
+				(gemIndex+1 === indexToChange || gemIndex-1 === indexToChange || gemIndex+5 === indexToChange || gemIndex-5 === indexToChange) && 
+				(
+					(
+						((gemIndex + 1) % x_dimention !== 0 && (gemIndex - 1) % x_dimention !== x_dimention - 1)
+						 || (gemIndex+5 === indexToChange || gemIndex-5 === indexToChange)
+					) 
+					||  
+					(
+						((indexToChange + 1) % x_dimention !== 0 && (indexToChange - 1) % x_dimention !== x_dimention - 1)
+						|| (gemIndex+5 === indexToChange || gemIndex-5 === indexToChange)
+					)
+				)
+			)
+			
+		{
+      	moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange);
+        	checkGems(panel,gemSelected,gemIndex);
+      }else{
+        setTimeout(() => {
+              drawPanel();
+            }, 300);
+      }
+		
       clickCounter = 0;
     }
     
@@ -110,6 +137,7 @@ function measureBlockPage() {
 // DRAW A PANEL OF GEMS
 function drawPanel() {
   let aux = 0;
+  let g = 0;
   if(panel.length != 0){
     ctx.clearRect( 0, 0, canvas.width, canvas.height);
     for (let i = 0; i < x_dimention; i++) {
@@ -118,9 +146,12 @@ function drawPanel() {
         const x = new Image();
         x.src = panel[aux].img;
         
-        x.onload = () => 
+        x.onload = () =>
         {
-          ctx.drawImage(x,j*calculation,i*calculation,calculation,calculation);
+			 ctx.drawImage(x,j*calculation,i*calculation,calculation,calculation);
+			 ctx.fillText(panel[i].positionX + " - " + panel[i].positionY,i*calculation,j*calculation);
+			// ctx.fillText("A - B",j,i);
+			 g++;
         };
         aux++;
       }
@@ -128,7 +159,6 @@ function drawPanel() {
   }else{
     for (let i = 0; i < x_dimention; i++) {
       for (let j = 0; j < y_dimention; j++) {
-        // let num = Math.floor(Math.random()*4);
   
         aux = generateNumGem();
   
@@ -137,7 +167,7 @@ function drawPanel() {
         // push into array
         panel.push({name:gems[aux].name, img:gems[aux].img, positionX:j*calculation, positionY:i*calculation});
         
-        x.onload = () => 
+        x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,i*calculation,calculation,calculation);
         };
@@ -159,8 +189,7 @@ function generateNumGem() {
         {
           
           num = Math.floor(Math.random()*4);
-          // if(panel.length > 10)
-          // console.log("INSIDE LOOP = ", panel.length - x_dimention,panel.length - (x_dimention * 2));
+         
         }
         return num;
 }
@@ -191,50 +220,160 @@ function moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange){
 }
 
 // CHECK THE GEMS NEAR THE "gemSelected"
-function checkGems(panel,gemSelected,gemToChange,gemIndex){
-  let gemConsecutiveX = 0;
-  let gemConsecutiveY = 0;
-  let isARow = "";
+function checkGems(panel,gemSelected,gemIndex){
+	let gemConsecutiveX = 1;
+	let gemToChangeConsecutiveX = 1;
+	let gemConsecutiveY = 1;
+	let gemToChangeConsecutiveY = 1;
+	// let indexG = 0; // index of the gem that it need to save in gemDelete[] for delete.
 
-  console.log(gemSelected.name + " - " + gemIndex);
-    console.log(gemSelected);
-    // CHECK TO THE RIGHT
-    for (let i = 1; i < 5; i++) {
-      if( (gemIndex + i) < panel.length && panel[gemIndex+i].name === gemSelected.name){
-          gemConsecutiveX++;
-      }  
-    }
-    // CHECK TO THE LEFT
-    for(let i = 1; i < 5; i++){
-      if( (gemIndex - i) >= 0 && panel[gemIndex-i].name === gemSelected.name){
-          gemConsecutiveX++;
-      }
-    }
-    // CHECK TO DOWN
-    for (let i = 5; i < panel.length; i+=5) {
-      if( (gemIndex + i) < panel.length && panel[gemIndex+i].name === gemSelected.name){
-          gemConsecutiveY++;
-      }  
-    }
-    // CHECK TO UP
-    for(let i = 5; i < panel.length; i+=5){
-      if( (gemIndex - i) >= 0 && panel[gemIndex-i].name === gemSelected.name){
-          gemConsecutiveY++;
-      }
-    }
+	// console.log(gemSelected.name + " - " + gemIndex);
+	//   console.log(panel);
+	// CHECK TO THE RIGHT
+	for (let i = 1; i < 3; i++) {
+		if( ( ((gemIndex + i) % x_dimention !== 0) && ((gemIndex + i) < panel.length) ) && panel[gemIndex+i].name === gemSelected.name){
+			gemConsecutiveX++;
+			findARow(i,(gemIndex + i),gemSelected);
+		}
+		if( ( ((indexToChange + i) % x_dimention !== 0) && ((indexToChange + i) < panel.length) ) && panel[indexToChange+i].name === gemToChange.name){
+			gemToChangeConsecutiveX++;
+			findARow(i,(indexToChange + i),gemToChange);
+		}
+		if((gemConsecutiveX && gemToChangeConsecutiveX) === 1){
+			i = 3;
+			
+		}
+		
+	}
+	
+	// CHECK TO THE LEFT
+	for(let i = 1; i < 3; i++){
+		if( ( ((gemIndex - i) % x_dimention !== x_dimention - 1) && (panel[gemIndex-i] !== undefined) ) && panel[gemIndex-i].name === gemSelected.name){
+			gemConsecutiveX++;
+			findARow(i,(gemIndex - i),gemSelected);
+		}
+		if( ( ((indexToChange - 1) % x_dimention !== x_dimention - 1)  && (panel[indexToChange-i] !== undefined) ) && panel[indexToChange-i].name === gemToChange.name){
+			gemToChangeConsecutiveX++;
+			findARow(i,(indexToChange - i),gemToChange);
+		}
+		if((gemConsecutiveX && gemToChangeConsecutiveX) === 1){
+			i = 3;
+			
+		}
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	// AT THIS POINT gemDelete ONLY HAS THE POSSIBLE HORIZONTAL COMBINATIONS.
+	// THIS DELETE ALL THE ARRAY IF DO NOT HAVE ANY COMBINATION YET
+	if(gemDelete.length < 3){
+		gemDelete = [];
+	}
 
-      console.log("X: "+gemConsecutiveX +" and Y: "+gemConsecutiveY);
-      if(gemConsecutiveX >= 2){
-        console.log("Existen mas de 2 gemas horizontales consecutivas por puntuar.");
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// CHECK TO DOWN
+	for(let i = 5, aux = 1; i < panel.length; i+=5, aux++) {
+		if( (gemIndex + i) < panel.length && panel[gemIndex+i].name === gemSelected.name){
+			gemConsecutiveY++;
+			findARow(aux,(gemIndex + i),gemSelected);
+		} 
+		if( (indexToChange + i) < panel.length && panel[indexToChange+i].name === gemToChange.name){
+			gemToChangeConsecutiveY++;
+			findARow(aux,(indexToChange + i),gemToChange);
+		} 
+		if((gemConsecutiveY && gemToChangeConsecutiveY) === 1){
+			i = panel.length;
+			
+		}
+	}
+	// CHECK TO UP
+	for(let i = 5, aux = 1; i < panel.length; i+=5, aux++){
+		if( panel[gemIndex-i] !== undefined && panel[gemIndex-i].name === gemSelected.name){
+			gemConsecutiveY++;
+			findARow(aux,(gemIndex-i),gemSelected);
+		}
+		if( panel[indexToChange-i] !== undefined && panel[indexToChange-i].name === gemToChange.name){
+			gemToChangeConsecutiveY++;
+			findARow(aux,(indexToChange-i),gemToChange);
+		}
+		if((gemConsecutiveY && gemToChangeConsecutiveY) === 1){
+			i = panel.length;
+			
+		}
+	}
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	removeGem(); // now this function is removing the gems ...
+						// from the array that donsn't make a combination of 3 or more.
 
-      }
-      if(gemConsecutiveY >= 2){
-        console.log("Existen mas de 2 gemas verticales consecutivas por puntuar.");
-      }
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+	// SAVE THE GEM TO DELETE IN AN ARRAY "gemDelete[]"
+   function findARow(i,indexG,gemSel) {
+		gemDelete.push({ index:indexG, name:panel[indexG].name, img:panel[indexG].img, positionX:panel[indexG].positionX, positionY:panel[indexG].positionY });
+		// panel.push({name:gems[aux].name, img:gems[aux].img, positionX:j*calculation, positionY:i*calculation});
+		if(i >= 2){
+			gemDelete.push({ index:indexG, name:gemSel.name, img:gemSel.img, positionX:gemSel.positionX, positionY:gemSel.positionY });
+			gemConsecutiveX = 1;
+			gemToChangeConsecutiveX = 1;
+		}
+		//  return i;
+	}
 
-      return isARow;
+	console.log(gemDelete);
 }
 
+function removeGem() {
+	let colors = [0,0,0,0]; // "blue","pink","green","yellow"
+	gemDelete.forEach(element => {
+		switch (gemDelete.name) {
+			case "blue":
+				colors[0]++;
+				break;
+			case "pink":
+				colors[1]++;
+				break;
+			case "green":
+				colors[2]++;
+				break;
+			case "yellow":
+				colors[3]++;
+				break;
+			default:
+				break;
+		}
+	});
+	var removeColor;
+	gemDelete.forEach(element => {
+		for (var i = 0; i < colors.length; i++) {
+			if (colors[i] < 3 ) {
+				switch (colors[i]) {
+					case "0":
+					// gemDelete //DELETE THE BLUE
+						removeColor = gemDelete.map(function(item){return item.name;}).indexOf("blue");
+						gemDelete.splice(removeColor,1);
+						break;
+					case "1":
+					// gemDelete //DELETE THE PINK
+						removeColor = gemDelete.map(function(item){return item.name;}).indexOf("pink");
+						gemDelete.splice(removeColor,1);						
+						break;
+					case "2":
+					// gemDelete //DELETE THE GREEN
+						removeColor = gemDelete.map(function(item){return item.name;}).indexOf("green");
+						gemDelete.splice(removeColor,1);					
+						break;
+					case "3":
+					// gemDelete //DELETE THE YELLOW
+						removeColor = gemDelete.map(function(item){return item.name;}).indexOf("yellow");
+						gemDelete.splice(removeColor,1);					
+						break;
+					default:
+						break;
+				}
+			}
+		}
+			
+	});	
+	
+}
 
 // CODE FOR CHECK THE GEMS
   // if( (gemIndex + 1) < panel.length && panel[gemIndex+1].name === gemSelected.name){
