@@ -140,6 +140,7 @@ function drawPanel() {
   let g = 0;
   if(panel.length != 0){
     ctx.clearRect( 0, 0, canvas.width, canvas.height);
+    
     for (let i = 0; i < x_dimention; i++) {
       for (let j = 0; j < y_dimention; j++) {
 
@@ -148,12 +149,16 @@ function drawPanel() {
         
         x.onload = () =>
         {
-			 ctx.drawImage(x,j*calculation,i*calculation,calculation,calculation);
-			 ctx.fillText(panel[i].positionX + " - " + panel[i].positionY,i*calculation,j*calculation);
-			// ctx.fillText("A - B",j,i);
-			 g++;
-        };
-        aux++;
+			  ctx.drawImage(x,j*calculation,i*calculation,calculation,calculation);
+          for (let i = 0; i < panel.length; i++) {
+              ctx.font = "12px Quicksand red";
+              ctx.fillStyle = "black";
+              ctx.fillText(panel[i].positionX + " - " + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 20);
+            
+          }
+      };
+      
+      aux++;
       }
     }
   }else{
@@ -170,6 +175,12 @@ function drawPanel() {
         x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,i*calculation,calculation,calculation);
+          for (let i = 0; i < panel.length; i++) {
+            ctx.font = "12px Quicksand red";
+            ctx.fillStyle = "black";
+            ctx.fillText(panel[i].positionX + " - " + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 20);
+          
+          }
         };
       }
     }
@@ -239,10 +250,13 @@ function checkGems(panel,gemSelected,gemIndex){
 			gemToChangeConsecutiveX++;
 			findARow(i,(indexToChange + i),gemToChange);
 		}
-		if((gemConsecutiveX && gemToChangeConsecutiveX) === 1){
-			i = 3;
-			
-		}
+		if(gemConsecutiveX === 1){
+      gemIndex = panel.length;  
+    }
+    else if(gemToChangeConsecutiveX === 1){
+      indexToChange = panel.length;
+    }  
+		
 		
 	}
 	
@@ -255,11 +269,14 @@ function checkGems(panel,gemSelected,gemIndex){
 		if( ( ((indexToChange - 1) % x_dimention !== x_dimention - 1)  && (panel[indexToChange-i] !== undefined) ) && panel[indexToChange-i].name === gemToChange.name){
 			gemToChangeConsecutiveX++;
 			findARow(i,(indexToChange - i),gemToChange);
-		}
-		if((gemConsecutiveX && gemToChangeConsecutiveX) === 1){
-			i = 3;
-			
-		}
+    }
+    if(gemConsecutiveX === 1){
+      gemIndex = undefined;  
+    }
+    else if(gemToChangeConsecutiveX === 1){
+      indexToChange = undefined;
+    }  
+		
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// AT THIS POINT gemDelete ONLY HAS THE POSSIBLE HORIZONTAL COMBINATIONS.
@@ -279,10 +296,13 @@ function checkGems(panel,gemSelected,gemIndex){
 			gemToChangeConsecutiveY++;
 			findARow(aux,(indexToChange + i),gemToChange);
 		} 
-		if((gemConsecutiveY && gemToChangeConsecutiveY) === 1){
-			i = panel.length;
-			
-		}
+    if(gemConsecutiveY === 1){
+      gemIndex = panel.length;  
+    }
+    else if(gemToChangeConsecutiveY === 1){
+      indexToChange = panel.length;
+    }
+  
 	}
 	// CHECK TO UP
 	for(let i = 5, aux = 1; i < panel.length; i+=5, aux++){
@@ -294,36 +314,45 @@ function checkGems(panel,gemSelected,gemIndex){
 			gemToChangeConsecutiveY++;
 			findARow(aux,(indexToChange-i),gemToChange);
 		}
-		if((gemConsecutiveY && gemToChangeConsecutiveY) === 1){
-			i = panel.length;
-			
-		}
+		if(gemConsecutiveY === 1){
+      gemIndex = undefined;  
+    }
+    else if(gemToChangeConsecutiveY === 1){
+      indexToChange = undefined;
+    }
+      
+		
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	removeGem(); // now this function is removing the gems ...
 						// from the array that donsn't make a combination of 3 or more.
-
+  
 	////////////////////////////////////////////////////////////////////////////////////////////////////
   
 	// SAVE THE GEM TO DELETE IN AN ARRAY "gemDelete[]"
    function findARow(i,indexG,gemSel) {
-		gemDelete.push({ index:indexG, name:panel[indexG].name, img:panel[indexG].img, positionX:panel[indexG].positionX, positionY:panel[indexG].positionY });
+		gemDelete.push({ name:panel[indexG].name, img:panel[indexG].img, positionX:panel[indexG].positionX, positionY:panel[indexG].positionY });
 		// panel.push({name:gems[aux].name, img:gems[aux].img, positionX:j*calculation, positionY:i*calculation});
 		if(i >= 2){
-			gemDelete.push({ index:indexG, name:gemSel.name, img:gemSel.img, positionX:gemSel.positionX, positionY:gemSel.positionY });
+			gemDelete.push({ name:gemSel.name, img:gemSel.img, positionX:gemSel.positionX, positionY:gemSel.positionY });
 			gemConsecutiveX = 1;
 			gemToChangeConsecutiveX = 1;
 		}
 		//  return i;
 	}
 
-	console.log(gemDelete);
+  console.log(gemDelete);
+  
+  setTimeout(() => {
+    gemDelete = [];  
+  }, 1000);
+  
 }
 
 function removeGem() {
 	let colors = [0,0,0,0]; // "blue","pink","green","yellow"
 	gemDelete.forEach(element => {
-		switch (gemDelete.name) {
+		switch (element.name) {
 			case "blue":
 				colors[0]++;
 				break;
@@ -340,38 +369,42 @@ function removeGem() {
 				break;
 		}
 	});
-	var removeColor;
-	gemDelete.forEach(element => {
-		for (var i = 0; i < colors.length; i++) {
-			if (colors[i] < 3 ) {
-				switch (colors[i]) {
-					case "0":
-					// gemDelete //DELETE THE BLUE
-						removeColor = gemDelete.map(function(item){return item.name;}).indexOf("blue");
-						gemDelete.splice(removeColor,1);
-						break;
-					case "1":
-					// gemDelete //DELETE THE PINK
-						removeColor = gemDelete.map(function(item){return item.name;}).indexOf("pink");
-						gemDelete.splice(removeColor,1);						
-						break;
-					case "2":
-					// gemDelete //DELETE THE GREEN
-						removeColor = gemDelete.map(function(item){return item.name;}).indexOf("green");
-						gemDelete.splice(removeColor,1);					
-						break;
-					case "3":
-					// gemDelete //DELETE THE YELLOW
-						removeColor = gemDelete.map(function(item){return item.name;}).indexOf("yellow");
-						gemDelete.splice(removeColor,1);					
-						break;
-					default:
-						break;
-				}
-			}
-		}
-			
-	});	
+  var removeColor;
+  for (var i = 0; i < colors.length; i++) {
+    while (colors[i] < 3 && colors[i] > 0 ) {
+      switch (i) {
+        case 0:
+                // gemDelete //DELETE THE BLUE
+                removeColor = gemDelete.map(function(item){return item.name;}).indexOf("blue");      
+                gemDelete.splice(removeColor,1);  
+                colors[i] = colors[i] - 1;  
+                
+                break;	
+        case 1:
+        				// gemDelete //DELETE THE PINK
+                removeColor = gemDelete.map(function(item){return item.name;}).indexOf("pink");      
+                gemDelete.splice(removeColor,1);  
+                colors[i] = colors[i] - 1;
+        				break;
+        case 2:
+        				// gemDelete //DELETE THE GREEN
+        				removeColor = gemDelete.map(function(item){return item.name;}).indexOf("green");      
+                gemDelete.splice(removeColor,1);  
+                colors[i] = colors[i] - 1;
+                break;
+        case 3:
+        				// gemDelete //DELETE THE YELLOW
+        				removeColor = gemDelete.map(function(item){return item.name;}).indexOf("yellow");      
+                gemDelete.splice(removeColor,1);  
+                colors[i] = colors[i] - 1;
+                break;
+        default:
+      					break;
+      }
+    }				
+      
+  }
+
 	
 }
 
