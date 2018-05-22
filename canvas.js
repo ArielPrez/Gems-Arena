@@ -147,18 +147,25 @@ function measureBlockPage() {
 // DRAW A PANEL OF GEMS
 function drawPanel() {
   let aux = 0;
+  
   if(panel.length != 0){
     ctx.clearRect( 0, 0, canvas.width, canvas.height);
     
-    for (let i = 0; i < x_dimention; i++) {
-      for (let j = 0; j < y_dimention; j++) {
-
+    for (let i = 0, j = 0, q = 0; i < (x_dimention * y_dimention); i++) {
+      // for (let j = 0; j < y_dimention; j++) {
+        if(i % x_dimention === 0){
+          j = 0;
+          if(i !== 0)
+            q++;
+        }else{
+          j++;
+        }
         const x = new Image();
-        x.src = panel[aux].img;
+        x.src = panel[i].img;
         
         x.onload = () =>
         {
-			  ctx.drawImage(x,j*calculation,i*calculation,calculation,calculation);
+			    ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
           for (let i = 0; i < panel.length; i++) {
               ctx.font = "12px Quicksand";
               ctx.fillStyle = "black";
@@ -168,8 +175,7 @@ function drawPanel() {
       };
       
       aux++;
-      }
-    }
+    }  
   }else{
     for (let i = 0, j = 0, q = 0; i < (x_dimention * y_dimention); i++) {
       // for (let j = 0; j < y_dimention; j++) {
@@ -200,26 +206,27 @@ function drawPanel() {
       // }
     }
   }
-  
+
 }
 
  // CHOOSE A RANDOM NUMBER
 function generateNumGem(i) {
   let num = Math.floor(Math.random()*4);
-  while(panel.length > 1 &&
-    (panel.length + 2) % x_dimention !== 0 &&
+  debugger
+  while(panel.length > 1 &&  // 25 > 1 
+    (panel.length + 2) % x_dimention !== 0 && // 25 +
       (panel[i + 1] !== undefined &&
         panel[i + 1].name === gems[num].name) || 
       (panel[i + 2] !== undefined &&
         panel[i + 2].name === gems[num].name) 
     ||
-    (panel.length - 1) % x_dimention !== 0 &&
+    (panel.length - 1) % x_dimention !== 0 && // 24 % 5 != 0
       (panel[i - 1] !== undefined &&
         panel[i - 1].name === gems[num].name) || 
       (panel[i - 2] !== undefined &&
         panel[i - 2].name === gems[num].name)
     ||
-    panel.length >= (x_dimention * 2) && 
+    panel.length >= (x_dimention * 2) && // 25 >= 10
       (panel[i + x_dimention] !== undefined &&
         panel[i + x_dimention].name === gems[num].name) ||
       (panel[i + (x_dimention * 2)] !== undefined &&
@@ -269,9 +276,9 @@ function moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange){
   panel[indexToChange].img = gem1img;
   panel[gemIndex].name = gem2;
   panel[gemIndex].img = gem2img;
-  setTimeout(() => {
+  // setTimeout(() => {
     drawPanel();
-  }, 300);
+  // }, 300);
 }
 
 // CHECK THE GEMS NEAR THE "gemSelected"
@@ -430,7 +437,7 @@ function checkGems(panel,gemSelected,gemIndex){
 }
 
 function removeGem() {
-	let colors = [0,0,0,0]; // "blue","pink","green","yellow"
+	let colors = [0,0,0,0]; //=====>  "blue","pink","green","yellow"
 	gemDelete.forEach(element => {
 		switch (element.name) {
 			case "blue":
@@ -485,38 +492,30 @@ function removeGem() {
       
   }
 
-	
+  console.log(gemDelete);
+
+  // UPDATE: gemDelete[] => panel[]
+  gemDelete.forEach(element => {
+    let num = 0;
+
+    for (let i = 0; i < panel.length; i++) {
+      if(element.positionX === panel[i].positionX && element.positionY === panel[i].positionY){
+        // RESET THE NAME TO FIND A NEW RANDOM GEMS
+        panel[i].name = ""; 
+        num = generateNumGem(i);
+        // const x = new Image();
+        // x.src = gems[num].img;
+        panel[i].name = gems[num].name;
+        panel[i].img = gems[num].img;
+      }  
+    }
+    
+  });
+
+  drawPanel();
+
 }
 
-// CODE FOR CHECK THE GEMS
-  // if( (gemIndex + 1) < panel.length && panel[gemIndex+1].name === gemSelected.name){
-  //   gemConsecutiveX++;
-  //   if( (gemIndex + 2) < panel.length && panel[gemIndex+2].name === gemSelected.name){
-  //     gemConsecutiveX++;
-  //     console.log("Hay 3 gemas hacia la derecha consecutivas por eliminar");
-  //   }
-  // }
-  // if( (gemIndex - 1) >= 0 && panel[gemIndex-1].name === gemSelected.name){
-  //   gemConsecutiveX++;
-  //   if( (gemIndex - 2) >= 0 && panel[gemIndex-2].name === gemSelected.name){
-  //     gemConsecutiveX++;
-  //     console.log("Hay 3 gemas hacia la izquierda consecutivas por eliminar");
-  //   }
-  // }
-  // if( (gemIndex - 5) >= 0 && panel[gemIndex-5].name === gemSelected.name){
-  //   gemConsecutiveY++;
-  //   if( (gemIndex - 10) >= 0 && panel[gemIndex-10].name === gemSelected.name){
-  //     gemConsecutiveY++;
-  //     console.log("Hay 3 gemas hacia arriba consecutivas por eliminar");
-  //   }
-  // } 
-  // if( (gemIndex + 5) < panel.length && panel[gemIndex+5].name === gemSelected.name){
-  //   gemConsecutiveY++;
-  //   if( (gemIndex + 10) < panel.length && panel[gemIndex+10].name === gemSelected.name){
-  //     gemConsecutiveY++;
-  //     console.log("Hay 3 gemas hacia abajo consecutivas por eliminar");
-  //   }
-  // }
 
 // GENERA UNA MATRIZ DE DIFERENTES COLORES
   // // ctx.fillRect(0,0,50,50);
