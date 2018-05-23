@@ -29,7 +29,7 @@ var characters = [
   let gemIndex;
   let indexToChange;
   let clickCounter = 0;
-  let time=10;
+  let time=11;
   let combination = false;
     
 // PANEL GRAPHIC DIMENTION - ALSO x_dimention IS USED AS A PATTERN OR REFERENCE FOR CALCULATIONS IN MANY ALGORITHM IN THE CODE
@@ -75,10 +75,13 @@ function startGame(){
       combination = false;
     }
     else {
-      time -=1;
+      if(time > 0){
+        time -=1;
+      }
+      
     }
     document.getElementById("countdowntimer").innerHTML = time;
-    };
+    }
     
     setInterval(timeToPlay,1000);
     
@@ -140,7 +143,8 @@ function startGame(){
 
 // MEASURE THE ELEMENTS OF THE SCREEN
 function measureBlockPage() {
-  
+  // mage-left2.jpg
+  // sorcerer-right3.jpg
 
   canvas.width = Math.floor((document.getElementById('myBody').offsetWidth / 3));
   canvas.height = Math.floor((document.getElementById('myBody').offsetWidth / 3));
@@ -186,9 +190,9 @@ function drawPanel() {
         x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
-          ctx.font = "15px Quicksand";
-          ctx.fillStyle = "black";
-          ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
+          // ctx.font = "15px Quicksand";
+          // ctx.fillStyle = "black";
+          // ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
       };
       
       aux++;
@@ -212,9 +216,9 @@ function drawPanel() {
         x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
-            ctx.font = "15px Quicksand";
-            ctx.fillStyle = "black";
-            ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
+            // ctx.font = "15px Quicksand";
+            // ctx.fillStyle = "black";
+            // ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
           
         };
     }
