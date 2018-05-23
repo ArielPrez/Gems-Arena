@@ -64,26 +64,30 @@ window.onload = function(){
   startGame();
 
 };
+
+// THIS MODIFIED THE TIMER OF THE GAME EVERY SECOND
+function timeToPlay() {
+  if (combination) {
+    time += 3;
+    combination = false;
+  }
+  else {
+    if(time > 0){
+      time -=1;
+    }
+    
+  }
+  document.getElementById("countdowntimer").innerHTML = time;
+}
+
 // FUNCTION TO START THE GAME AND CLICS CONTROL OVER THE CANVAS/PANEL 
 function startGame(){
   measureBlockPage();
   drawPanel();
 
-  function timeToPlay() {
-    if (combination) {
-      time += 3;
-      combination = false;
-    }
-    else {
-      if(time > 0){
-        time -=1;
-      }
-      
-    }
-    document.getElementById("countdowntimer").innerHTML = time;
-    }
-    
-    setInterval(timeToPlay,1000);
+  
+  // CALL THE FUNCTION "timeToPlay()" EVERY SECOND TO MODIFIED THE TIMER
+  setInterval(timeToPlay,1000);
     
   
 
@@ -293,9 +297,9 @@ function moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange){
   panel[indexToChange].img = gem1img;
   panel[gemIndex].name = gem2;
   panel[gemIndex].img = gem2img;
-  // setTimeout(() => {
+  setTimeout(() => {
     drawPanel();
-  // }, 300);
+  }, 300);
 }
 
 // CHECK THE GEMS NEAR THE "gemSelected"
@@ -447,9 +451,9 @@ function checkGems(panel,gemSelected,gemIndex){
   }
   console.log(gemDelete);
   
-  setTimeout(() => {
+  // setTimeout(() => {
     gemDelete = [];  
-  }, 1000);
+  // }, 1000);
   
 }
 
@@ -530,7 +534,11 @@ function removeGem() {
   });
 
   drawPanel();
-
+  if(gemDelete.length !== 0){
+    combination = true;
+    timeToPlay();
+  }
+  
 }
 
 
