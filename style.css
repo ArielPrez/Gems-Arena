@@ -2,35 +2,110 @@
   margin: 0;
   padding: 0;
   /* background-color: #2a3436; */
-  
 }
+body{
+  background-image: url("images/fantasy-background.jpg");
+  background-size: 100%;
+  background-position-y: top;
+}
+.countdowntimer p{
+  float: left;
+  font-size: 30px;
+}
+.countdowntimer span{
+  margin: 10 20px 10 20px;
+}
+
+.countdowntimer{
+  margin-left: 35%;
+  color: white;
+  width: 150px;
+  border: 5px solid silver;
+}
+
+#countdowntimer{
+  float: right;
+  margin: 10px 20px 10px 0px;
+  /* color: white; */
+  font-size: 50px;
+  border: 5px solid silver;
+  border-radius: 10px;
+  width: 70px;
+  text-align: center;
+}
+
 .info{
-  height: 100px;
+  height: 120px;
   width: 100%;
   float: left;
+  /* background-color: rgba(42, 52, 54, 0.7); */
+  background: linear-gradient(black,rgba(42, 52, 54, 0.3));
   /* border: 1px solid gray; */
 }
+/* .info img{
+  
+  src: url();
+  opacity: 0.5;
+    filter: alpha(opacity=50);
+    background-size: 100% 330px;
+  background-position-y: center; 
+} */
+.info::after {
+  content: "";
+  background: url("images/cool-pc-backgrounds.jpg");
+  opacity: 0.5;
+  top: -35%;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;   
+  background-size: 100% 100%;
+  background-position-y: top;
+  background-repeat: no-repeat;
+}
+
 .gems{
   float: left;
   /* z-index: 0; */
   /* width: 400px; */
   /* height: 400px; */
 }
+#gems{
+  border: 5px solid silver;
+  border-radius: 20px;
+  background-color: white;
+  padding: 5px 3px 3px 5px;
+  /* margin-left: -8px; */
+  margin: 0 0 0 5%;
+}
 .character1{
+  background-color: rgba(42, 52, 54, 1);
+  border: 5px solid silver;
+  border-radius: 20px;
+  clear: both;
   float: left;
+  text-align: center;
+  padding: 5 5 5 5;
+  margin-left: 2%;
   /* z-index: 1; */
   /* width: 370px; */
   /* height: 500px; */
   /* border: 1px solid gray; */
 }
 .character2{
+  background-color: rgba(42, 52, 54, 1);
+  border: 5px solid silver;
+  border-radius: 20px;
   float: left;
+  text-align: center;
+  margin-left: 3%;
   /* width: 370px; */
   /* height: 500px; */
   /* border: 1px solid gray; */
 }
 div{
-  width: 33.33%;
+  /* width: 32.33%; */
   /* height: auto; */
 }
 /* .clearfix {
@@ -46,13 +121,18 @@ img{
 }
 
 #lifeChar1{
-float: left;
-  border: 1px solid gray;
-background-color: lightgreen;
+  float: left;
+  margin: 5% 0px 10px 5%;
+  /* border: 1px solid gray; */
+  background-color: lightgreen;
+  border: 3px solid silver;
+  border-radius: 10px;  
 }
 #lifeChar2{
   float: right;
-    border: 1px solid gray;
-    background-color: lightgreen;
+  margin: 5% 5% 0px 10px;
+  background-color: lightgreen;
+  border: 3px solid silver;
+  border-radius: 10px;  
 }
 

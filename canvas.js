@@ -29,7 +29,9 @@ var characters = [
   let gemIndex;
   let indexToChange;
   let clickCounter = 0;
-  
+  let time=10;
+  let combination = false;
+    
 // PANEL GRAPHIC DIMENTION - ALSO x_dimention IS USED AS A PATTERN OR REFERENCE FOR CALCULATIONS IN MANY ALGORITHM IN THE CODE
   const x_dimention = 5;
   const y_dimention = 5;
@@ -66,6 +68,21 @@ window.onload = function(){
 function startGame(){
   measureBlockPage();
   drawPanel();
+
+  function timeToPlay() {
+    if (combination) {
+      time += 3;
+      combination = false;
+    }
+    else {
+      time -=1;
+    }
+    document.getElementById("countdowntimer").innerHTML = time;
+    };
+    
+    setInterval(timeToPlay,1000);
+    
+  
 
   // ADD EVENT LISTENER FOR CLICK EVENTS
   canvas.addEventListener('click',function(event){
@@ -123,15 +140,17 @@ function startGame(){
 
 // MEASURE THE ELEMENTS OF THE SCREEN
 function measureBlockPage() {
+  
+
   canvas.width = Math.floor((document.getElementById('myBody').offsetWidth / 3));
   canvas.height = Math.floor((document.getElementById('myBody').offsetWidth / 3));
 
-  player1.width = Math.floor(document.getElementById('myBody').offsetWidth / 3)-2;
+  player1.width = Math.floor(document.getElementById('myBody').offsetWidth / 4) + 20;
   player1.height = Math.floor(window.innerHeight / 1.5);
   player1.getElementsByTagName("img")[0].style.width = player1.width+"px";
   player1.getElementsByTagName("img")[0].style.height = player1.height+"px";
   
-  player2.width = Math.floor(document.getElementById('myBody').offsetWidth / 3)-2;
+  player2.width = Math.floor(document.getElementById('myBody').offsetWidth / 4) + 20;
   player2.height = Math.floor(window.innerHeight / 1.5);
   player2.getElementsByTagName("img")[0].style.width = player2.width+"px";
   player2.getElementsByTagName("img")[0].style.height = player2.height+"px";
@@ -147,12 +166,13 @@ function measureBlockPage() {
 // DRAW A PANEL OF GEMS
 function drawPanel() {
   let aux = 0;
+  let drawPositions = true;
   
+
   if(panel.length != 0){
     ctx.clearRect( 0, 0, canvas.width, canvas.height);
     
     for (let i = 0, j = 0, q = 0; i < (x_dimention * y_dimention); i++) {
-      // for (let j = 0; j < y_dimention; j++) {
         if(i % x_dimention === 0){
           j = 0;
           if(i !== 0)
@@ -165,20 +185,16 @@ function drawPanel() {
         
         x.onload = () =>
         {
-			    ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
-          for (let i = 0; i < panel.length; i++) {
-              ctx.font = "12px Quicksand";
-              ctx.fillStyle = "black";
-              ctx.fillText(panel[i].positionX + " - " + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 20);
-            
-          }
+          ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
+          ctx.font = "15px Quicksand";
+          ctx.fillStyle = "black";
+          ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
       };
       
       aux++;
     }  
   }else{
     for (let i = 0, j = 0, q = 0; i < (x_dimention * y_dimention); i++) {
-      // for (let j = 0; j < y_dimention; j++) {
         if(i % x_dimention === 0){
           j = 0;
           if(i !== 0)
@@ -196,14 +212,11 @@ function drawPanel() {
         x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
-          for (let z = 0; z < panel.length; z++) {
-            ctx.font = "12px Quicksand";
+            ctx.font = "15px Quicksand";
             ctx.fillStyle = "black";
-            ctx.fillText(panel[z].positionX + " - " + panel[z].positionY,panel[z].positionX + 10,panel[z].positionY + 20);
+            ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
           
-          }
         };
-      // }
     }
   }
 
@@ -212,17 +225,17 @@ function drawPanel() {
  // CHOOSE A RANDOM NUMBER
 function generateNumGem(i) {
   let num = Math.floor(Math.random()*4);
-  debugger
+  
   while(panel.length > 1 &&  // 25 > 1 
     (panel.length + 2) % x_dimention !== 0 && // 25 +
       (panel[i + 1] !== undefined &&
-        panel[i + 1].name === gems[num].name) || 
+        panel[i + 1].name === gems[num].name) && 
       (panel[i + 2] !== undefined &&
         panel[i + 2].name === gems[num].name) 
     ||
     (panel.length - 1) % x_dimention !== 0 && // 24 % 5 != 0
       (panel[i - 1] !== undefined &&
-        panel[i - 1].name === gems[num].name) || 
+        panel[i - 1].name === gems[num].name) && 
       (panel[i - 2] !== undefined &&
         panel[i - 2].name === gems[num].name)
     ||
@@ -241,7 +254,7 @@ function generateNumGem(i) {
     {
           
       num = Math.floor(Math.random()*4);
-     
+     console.log(num);
     }
     return num;
 
@@ -505,8 +518,8 @@ function removeGem() {
         num = generateNumGem(i);
         // const x = new Image();
         // x.src = gems[num].img;
-        panel[i].name = gems[num].name;
-        panel[i].img = gems[num].img;
+        panel[i].name = gems[num].name; // GEM COLOR 
+        panel[i].img = gems[num].img;  // GEM ADDRESS
       }  
     }
     
