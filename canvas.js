@@ -31,7 +31,8 @@ var characters = [
   let clickCounter = 0;
   let time=11;
   let combination = false;
-    
+  let life1,life2;
+  let end;
 // PANEL GRAPHIC DIMENTION - ALSO x_dimention IS USED AS A PATTERN OR REFERENCE FOR CALCULATIONS IN MANY ALGORITHM IN THE CODE
   const x_dimention = 5;
   const y_dimention = 5;
@@ -51,10 +52,14 @@ var mouse = {
   var ctx = canvas.getContext("2d");
   var player1 = document.getElementsByClassName("character1")[0];
   var player2 = document.getElementsByClassName("character2")[0];
-  var lifeBar1 = document.getElementById("lifeChar1");
-  var lifeBar2 = document.getElementById("lifeChar2");
-
-
+  var lifeChar1 = document.getElementsByClassName("life1")[0];
+  var lifeChar2 = document.getElementsByClassName("life2")[0];
+  var lifeBar1 = document.getElementsByClassName("lifeChar1")[0];
+  var lifeBar2 = document.getElementsByClassName("lifeChar2")[0];
+  var lifePercentage1 = document.getElementsByClassName("lifePercentage1")[0];
+  var lifePercentage2 = document.getElementsByClassName("lifePercentage2")[0];
+  // var x = document.querySelector("character1 myImg").src;
+  // document.getElementById("demo").innerHTML = x;
 
 // START OF THE GAME
 window.onload = function(){
@@ -68,12 +73,30 @@ window.onload = function(){
 // THIS MODIFIED THE TIMER OF THE GAME EVERY SECOND
 function timeToPlay() {
   if (combination) {
-    time += 3;
+    if(lifePercentage1.innerHTML < 100){
+      lifePercentage1.innerHTML = lifePercentage1.innerHTML + 10;
+      lifeBar1.style.width = (lifeBar1.style.width.split("px", 1) + (life1*0.1))+"px";
+    }
+    time += 2;
     combination = false;
   }
   else {
     if(time > 0){
       time -=1;
+    }else{
+      if(lifePercentage1.innerHTML > 10 && lifePercentage2.innerHTML > 10){
+        lifePercentage1.innerHTML = lifePercentage1.innerHTML - 10;
+        lifeBar1.style.width = (lifeBar1.style.width.split("px", 1) - (life1*0.1))+"px";
+        time = 5;
+      }else{
+        lifePercentage1.innerHTML = lifePercentage1.innerHTML - 10;
+        lifeBar1.style.width = lifePercentage1.innerHTML+"px";
+        console.log("GAME OVER!");
+        clearInterval(end);
+      }
+      
+
+      
     }
     
   }
@@ -87,9 +110,13 @@ function startGame(){
 
   
   // CALL THE FUNCTION "timeToPlay()" EVERY SECOND TO MODIFIED THE TIMER
-  setInterval(timeToPlay,1000);
+  end = setInterval(timeToPlay,1000);
     
   
+  function myFunction() {
+    document.getElementsByTagName("INPUT")[0].setAttribute("type", "button"); 
+  
+  }
 
   // ADD EVENT LISTENER FOR CLICK EVENTS
   canvas.addEventListener('click',function(event){
@@ -113,32 +140,20 @@ function startGame(){
       circle(gemSelected.positionX,gemSelected.positionY);
       clickCounter++;
     }else{
-		circle(gemSelected.positionX,gemSelected.positionY);
-		
-		if(
-				(gemIndex+1 === indexToChange || gemIndex-1 === indexToChange || gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange) && 
-				(
-					(
-						((gemIndex + 1) % x_dimention !== 0 && (gemIndex - 1) % x_dimention !== x_dimention - 1)
-						 || (gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange)
-					) 
-					||  
-					(
-						((indexToChange + 1) % x_dimention !== 0 && (indexToChange - 1) % x_dimention !== x_dimention - 1)
-						|| (gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange)
-					)
-				)
-			)
-			
-		{
-      	moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange);
-        	checkGems(panel,gemSelected,gemIndex);
+      circle(gemSelected.positionX,gemSelected.positionY);
+      if((gemIndex+1 === indexToChange || gemIndex-1 === indexToChange || gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange) && 
+        ((((gemIndex + 1) % x_dimention !== 0 && (gemIndex - 1) % x_dimention !== x_dimention - 1) ||
+            (gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange)
+        ) ||
+        (((indexToChange + 1) % x_dimention !== 0 && (indexToChange - 1) % x_dimention !== x_dimention - 1) ||
+           (gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange)))){
+              moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange);
+              checkGems(panel,gemSelected,gemIndex);
       }else{
         setTimeout(() => {
-              drawPanel();
-            }, 300);
+          drawPanel();
+        }, 300);
       }
-		
       clickCounter = 0;
     }
     
@@ -154,20 +169,26 @@ function measureBlockPage() {
   canvas.height = Math.floor((document.getElementById('myBody').offsetWidth / 3));
 
   player1.width = Math.floor(document.getElementById('myBody').offsetWidth / 4) + 20;
+  player1.style.width = player1.width+"px";
   player1.height = Math.floor(window.innerHeight / 1.5);
+  player1.style.height = player1.height+"px";
   player1.getElementsByTagName("img")[0].style.width = player1.width+"px";
   player1.getElementsByTagName("img")[0].style.height = player1.height+"px";
   
   player2.width = Math.floor(document.getElementById('myBody').offsetWidth / 4) + 20;
+  player2.style.width = player2.width+"px";
   player2.height = Math.floor(window.innerHeight / 1.5);
+  player2.style.height = player2.height+"px";
   player2.getElementsByTagName("img")[0].style.width = player2.width+"px";
   player2.getElementsByTagName("img")[0].style.height = player2.height+"px";
   
-  lifeBar1.style.width = Math.floor(document.getElementById('myBody').offsetWidth / 3) / 2 +"px";
-  // lifeBar1.getElementById("lifeChar1").style.width = lifeBar1.width+"px";
+  lifeBar1.style.width = Math.floor(document.getElementById('myBody').offsetWidth / 5)+"px";
+  lifeChar1.style.width = lifeBar1.style.width;
+  life1 = lifeBar1.style.width.split("px", 1);
 
-  lifeBar2.style.width = Math.floor(document.getElementById('myBody').offsetWidth / 3) / 2 + "px";
-  // lifeBar2.getElementById("lifeChar2").style.width = lifeBar2.width+"px";
+  lifeBar2.style.width = Math.floor(document.getElementById('myBody').offsetWidth / 5)+ "px";
+  lifeChar2.style.width = lifeBar2.style.width;
+  life2 = lifeBar2.style.width.split("px", 1);
 
 }
 
@@ -234,8 +255,8 @@ function drawPanel() {
 function generateNumGem(i) {
   let num = Math.floor(Math.random()*4);
   
-  while(panel.length > 1 &&  // 25 > 1 
-    (panel.length + 2) % x_dimention !== 0 && // 25 +
+  while(panel.length > 1 &&  // 25 > 1 |||| SI EL PANEL TIENE MAS DE UNA GEMA
+    (panel.length + 2) % x_dimention !== 0 && // 25 +  |||| Y  
       (panel[i + 1] !== undefined &&
         panel[i + 1].name === gems[num].name) && 
       (panel[i + 2] !== undefined &&
@@ -262,7 +283,6 @@ function generateNumGem(i) {
     {
           
       num = Math.floor(Math.random()*4);
-     console.log(num);
     }
     return num;
 
@@ -299,7 +319,7 @@ function moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange){
   panel[gemIndex].img = gem2img;
   setTimeout(() => {
     drawPanel();
-  }, 300);
+  }, 200);
 }
 
 // CHECK THE GEMS NEAR THE "gemSelected"
@@ -449,7 +469,6 @@ function checkGems(panel,gemSelected,gemIndex){
     gemConsecutiveY = 1;
     gemToChangeConsecutiveY = 1;
   }
-  console.log(gemDelete);
   
   // setTimeout(() => {
     gemDelete = [];  
@@ -513,8 +532,6 @@ function removeGem() {
       
   }
 
-  console.log(gemDelete);
-
   // UPDATE: gemDelete[] => panel[]
   gemDelete.forEach(element => {
     let num = 0;
@@ -533,7 +550,9 @@ function removeGem() {
     
   });
 
-  drawPanel();
+  setTimeout(() => {
+    drawPanel();
+  }, 300);
   if(gemDelete.length !== 0){
     combination = true;
     timeToPlay();
