@@ -7,18 +7,18 @@ var gems = [
   ];
 // ARRAY DE CHARACTERS
 var characters = [
-  { name: 'mage1',       img: 'images/characters/mage-left1.jpg'},
-  { name: 'mage2',       img: 'images/characters/mage-left2.jpg'},
-  { name: 'mage3',       img: 'images/characters/mage-left3.jpg'},
-  { name: 'mage4',       img: 'images/characters/mage-right1.jpg'},
-  { name: 'mage5',       img: 'images/characters/mage-right2.jpg'},
-  { name: 'mage6',       img: 'images/characters/mage-right3.jpg'},
-  { name: 'sorcerer1',       img: 'images/characters/sorcerer-left1.jpg'},
-  { name: 'sorcerer2',       img: 'images/characters/sorcerer-left2.jpg'},
-  { name: 'sorcerer3',       img: 'images/characters/sorcerer-left3.jpg'},
-  { name: 'sorcerer4',       img: 'images/characters/sorcerer-right1.jpg'},
-  { name: 'sorcerer5',       img: 'images/characters/sorcerer-right2.jpg'},
-  { name: 'sorcerer6',       img: 'images/characters/sorcerer-right3.jpg'},
+  { name: 'mage1',           img: 'images/characters/mage-left1.jpg',           side:'left'},
+  { name: 'mage2',           img: 'images/characters/mage-left2.jpg',           side:'left'},      
+  { name: 'mage3',           img: 'images/characters/mage-left3.jpg',           side:'left'},
+  { name: 'mage4',           img: 'images/characters/mage-right1.jpg',          side:'right'},
+  { name: 'mage5',           img: 'images/characters/mage-right2.jpg',          side:'right'},
+  { name: 'mage6',           img: 'images/characters/mage-right3.jpg',          side:'right'},
+  { name: 'sorcerer1',       img: 'images/characters/sorcerer-left1.jpg',       side:'left'},
+  { name: 'sorcerer2',       img: 'images/characters/sorcerer-left2.jpg',       side:'left'},
+  { name: 'sorcerer3',       img: 'images/characters/sorcerer-left3.jpg',       side:'left'},
+  { name: 'sorcerer4',       img: 'images/characters/sorcerer-right1.jpg',      side:'right'},
+  { name: 'sorcerer5',       img: 'images/characters/sorcerer-right2.jpg',      side:'right'},
+  { name: 'sorcerer6',       img: 'images/characters/sorcerer-right3.jpg',      side:'right'},
 ];
 
 // DIFFERENT VARIABLES AND ARRAY
@@ -38,7 +38,7 @@ var characters = [
 
 // PANEL GRAPHIC DIMENTION - ALSO x_dimention IS USED AS A PATTERN OR REFERENCE FOR CALCULATIONS IN MANY ALGORITHM IN THE CODE
   const x_dimention = 5;
-  const y_dimention = 5;
+  // const y_dimention = 5;
 
   const calculation = Math.floor(Math.floor(document.getElementById('myBody').offsetWidth / 3)/x_dimention);
   
@@ -186,15 +186,15 @@ function measureBlockPage() {
   player1.style.width = player1.width+"px";
   player1.height = Math.floor(window.innerHeight / 1.5);
   player1.style.height = player1.height+"px";
-  player1.getElementsByTagName("img")[0].style.width = player1.width+"px";
-  player1.getElementsByTagName("img")[0].style.height = player1.height+"px";
+  // player1.getElementsByTagName("img")[0].style.width = player1.width+"px";
+  // player1.getElementsByTagName("img")[0].style.height = player1.height+"px";
   
   player2.width = Math.floor(document.getElementById('myBody').offsetWidth / 4) + 20;
   player2.style.width = player2.width+"px";
   player2.height = Math.floor(window.innerHeight / 1.5);
   player2.style.height = player2.height+"px";
-  player2.getElementsByTagName("img")[0].style.width = player2.width+"px";
-  player2.getElementsByTagName("img")[0].style.height = player2.height+"px";
+  // player2.getElementsByTagName("img")[0].style.width = player2.width+"px";
+  // player2.getElementsByTagName("img")[0].style.height = player2.height+"px";
   
   lifeBar1.style.width = Math.floor(document.getElementById('myBody').offsetWidth / 5)+"px";
   lifeChar1.style.width = lifeBar1.style.width;
@@ -204,6 +204,13 @@ function measureBlockPage() {
   lifeChar2.style.width = lifeBar2.style.width;
   life2 = lifeBar2.style.width.split("px", 1);
 
+  var myImage1 = new Image(player1.width, player1.height);
+  myImage1.src = characters[Math.floor(Math.random()*3)].img;
+  document.body.getElementsByClassName("character1")[0].appendChild(myImage1);
+
+  var myImage2 = new Image(player2.width, player2.height);
+  myImage2.src = characters[Math.floor(Math.random()*6)].img;
+  document.body.getElementsByClassName("character2")[0].appendChild(myImage2);
 }
 
 // DRAW A PANEL OF GEMS
@@ -215,7 +222,7 @@ function drawPanel() {
   if(panel.length != 0){
     ctx.clearRect( 0, 0, canvas.width, canvas.height);
     
-    for (let i = 0, j = 0, q = 0; i < (x_dimention * y_dimention); i++) {
+    for (let i = 0, j = 0, q = 0; i < (x_dimention * x_dimention); i++) {
         if(i % x_dimention === 0){
           j = 0;
           if(i !== 0)
@@ -237,7 +244,7 @@ function drawPanel() {
       aux++;
     }  
   }else{
-    for (let i = 0, j = 0, q = 0; i < (x_dimention * y_dimention); i++) {
+    for (let i = 0, j = 0, q = 0; i < (x_dimention * x_dimention); i++) {
         if(i % x_dimention === 0){
           j = 0;
           if(i !== 0)
@@ -265,24 +272,20 @@ function drawPanel() {
 
 }
 
- // CHOOSE A RANDOM NUMBER
+// CHOOSE A RANDOM NUMBER
 function generateNumGem(i) {
   let num = Math.floor(Math.random()*4);
   
   while(panel.length > 1 &&  // MIENTRAS EL PANEL TENGA MAS DE UNA GEMA
     (panel[i + 2] !== undefined && // Y DOS GEMAS MAS ADELANTE EN EL ARRAY DE LA QUE ESTOY ACTUALMENTE NO SEA INDEFINIDO
-      panel[i + 2] % x_dimention !== 0 && // Y DOS GEMAS ADELANTE DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY NO SEA DIVISIBLE POR 5 | ESTO EVITA COMPROBAR INNECESARIAMENTE
+      // panel[i + 2] % x_dimention !== 0 && // Y DOS GEMAS ADELANTE DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY NO SEA DIVISIBLE POR 5 | ESTO EVITA COMPROBAR INNECESARIAMENTE
       panel[i + 1].name === gems[num].name && // Y UNA GEMA MAS ADELANTE EN EL ARRAY DE LA QUE ESTOY ACTUALMENTE SEA IGUAL A LA GEMA GENERADA ALEATORIAMENTE
       panel[i + 2].name === gems[num].name) || // Y DOS GEMA MAS ADELANTE EN EL ARRAY DE LA QUE ESTOY ACTUALMENTE SEA IGUAL A LA GEMA GENERADA ALEATORIAMENTE | AMBAS i+2 y i+1 DEBEN DE COINCIDIR PARA QUE EXISTA UNA POSIBLE COMBINACION Y SE NECESITE GENERAR OTRA GEMA
-      
-      
     //             O    SI NO HAY COINCIDENCIA COMPRUEBA EN LA SIGUIENTE DIRECCION.....
     (panel[i - 2] !== undefined && // Y DOS GEMAS HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY NO SEA INDEFINIDO
-      panel[i - 1] % x_dimention !== 0 && // Y UNA GEMA HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY NO ES DIVISIBLE POR 5 | ESTO EVITA COMPROBAR INNECESARIAMENTE
+      // panel[i - 1] % x_dimention !== 0 && // Y UNA GEMA HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY NO ES DIVISIBLE POR 5 | ESTO EVITA COMPROBAR INNECESARIAMENTE
       panel[i - 1].name === gems[num].name && // Y UNA GEMA HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY SEA IGUAL A LA GEMA GENERADA ALEATORIAMENTE
       panel[i - 2].name === gems[num].name) || // Y DOS GEMAS HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY SEA IGUAL A LA GEMA GENERADA ALEATORIAMENTE
-      
-      
     //            O    SI NO HAY COINCIDENCIA COMPRUEBA EN LA SIGUIENTE DIRECCION.....
     (panel[i + (x_dimention * 2)] !== undefined &&
       panel[i + x_dimention].name === gems[num].name &&
@@ -290,7 +293,10 @@ function generateNumGem(i) {
     //            O    SI NO HAY COINCIDENCIA COMPRUEBA EN LA SIGUIENTE DIRECCION.....
     (panel[i - (x_dimention * 2)] !== undefined && 
       panel[i - x_dimention].name === gems[num].name &&
-      panel[i - (x_dimention * 2)].name === gems[num].name)
+      panel[i - (x_dimention * 2)].name === gems[num].name) ||
+    //            O    SI NO HAY COINCIDENCIA COMPRUEBA LAS GEMAS OPUESTAS (+1 && -1) || (+5 && -5)
+    ((panel[i + 1] && panel[i - 1]) !== undefined && (panel[i + 1] === panel[i - 1])) ||
+    ((panel[i + x_dimention] && panel[i - x_dimention]) !== undefined && (panel[i + x_dimention] === panel[i - x_dimention]))
     )
     {
           
@@ -298,15 +304,6 @@ function generateNumGem(i) {
     }
     return num;
 
-// OLD generateNumGem() 
-  // while(panel.length > 1 &&
-  //             (panel.length - 1) % 5 !== 0 &&
-  //             panel[panel.length - 1].name === gems[num].name && 
-  //             panel[panel.length - 2].name === gems[num].name 
-  //             || 
-  //         panel.length > ((x_dimention * 2) - 1) && 
-  //             panel[panel.length - 5].name === gems[num].name && 
-  //             panel[panel.length - (x_dimention * 2)].name === gems[num].name)
 }
 
 // DRAW A CIRCLE ON THE SELECTED GEM
@@ -341,13 +338,13 @@ function checkGems(panel,gemSelected,gemIndex){
 	let gemConsecutiveY = 1;
   let gemToChangeConsecutiveY = 1;
   let gemSelectedClicked = 0;
-  let gemToChangeClicked = 0;
+  // let gemToChangeClicked = 0;
 	
 	// CHECK TO THE RIGHT
 	for (let i = 1; i < 3; i++) {
 		if( ( ((gemIndex + i) % x_dimention !== 0) && ((gemIndex + i) < panel.length) && gemConsecutiveX != 0 ) && panel[gemIndex+i].name === gemSelected.name){
       gemConsecutiveX++;
-			findARow(i,(gemIndex + i),gemSelected, gemSelectedClicked);
+			findARow(i,(gemIndex + i),gemSelected);
 		}
 		if( ( ((indexToChange + i) % x_dimention !== 0) && ((indexToChange + i) < panel.length) && gemToChangeConsecutiveX != 0) && panel[indexToChange+i].name === gemToChange.name){
 			gemToChangeConsecutiveX++;
@@ -391,17 +388,15 @@ function checkGems(panel,gemSelected,gemIndex){
     }  
 		
   }
-
-  // RESTART THE VALUES OF THESE COUNTERS FOR THE NEXT CHECK IN THE NEXT DIRECTION
-  counterReset();
-
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	// AT THIS POINT gemDelete ONLY HAS THE POSSIBLE HORIZONTAL COMBINATIONS.
 	// THIS DELETE ALL THE ARRAY IF DO NOT HAVE ANY COMBINATION YET
 	if(gemDelete.length < 3){
 		gemDelete = [];
-	}
-
+  }
+  // RESTART THE VALUES OF THESE COUNTERS FOR THE NEXT CHECK IN THE NEXT DIRECTION
+  counterReset();
+  gemSelectedClicked = 0;
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// CHECK TO DOWN
 	for(let i = x_dimention, aux = 1; aux < 3; i+=x_dimention, aux++) {
@@ -468,7 +463,7 @@ function checkGems(panel,gemSelected,gemIndex){
 		// 	gemConsecutiveX = 1;
 		// 	gemToChangeConsecutiveX = 1;
     // }
-    if(i === 1 && (gemSelectedClicked === 0 || gemToChangeClicked === 0) && gemDelete.length > 0){
+    if(i === 1 && gemSelectedClicked < 2 || gemSelectedClicked === 0){
       gemDelete.push({ name:gemSel.name, img:gemSel.img, positionX:gemSel.positionX, positionY:gemSel.positionY });
       gemSelectedClicked++;
     //   if(gemSelectedClicked === false)
@@ -485,6 +480,7 @@ function checkGems(panel,gemSelected,gemIndex){
     gemToChangeConsecutiveX = 1;
     gemConsecutiveY = 1;
     gemToChangeConsecutiveY = 1;
+    
   }
   
   // setTimeout(() => {
