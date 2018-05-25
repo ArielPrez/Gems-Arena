@@ -21,10 +21,10 @@ var characters = [
   { name: 'sorcerer6',       img: 'images/characters/sorcerer-right3.jpg'},
 ];
 
-// DIFFERENT VARIABLES
-  let panel = [];
-  let gemSelected = [];
-  let gemToChange = [];
+// DIFFERENT VARIABLES AND ARRAY
+  let panel = []; // ====> ARRAY OF GEMS DRAWINGS IN THE CANVAS
+  let gemSelected = []; // ====> SECOND GEM SELECTED IN THE PANEL EACH TURN
+  let gemToChange = []; // ====> FIRST GEM SELECTED IN THE PANEL EACH TURN
   let gemDelete = [];
   let gemIndex;
   let indexToChange;
@@ -33,6 +33,9 @@ var characters = [
   let combination = false;
   let life1,life2;
   let end;
+  //          [ COMB OF 3],[COMB OF 4],[COMB OF 5]
+  let combinationQuantity = [0,0,0]; // => THIS SAVE THE NUMBER OF COMBINATIONS MADE EACH TIME AND THE QUANTITY OF EACH COMBINATION.
+
 // PANEL GRAPHIC DIMENTION - ALSO x_dimention IS USED AS A PATTERN OR REFERENCE FOR CALCULATIONS IN MANY ALGORITHM IN THE CODE
   const x_dimention = 5;
   const y_dimention = 5;
@@ -73,9 +76,12 @@ window.onload = function(){
 // THIS MODIFIED THE TIMER OF THE GAME EVERY SECOND
 function timeToPlay() {
   if (combination) {
-    if(lifePercentage1.innerHTML < 100){
-      lifePercentage1.innerHTML = lifePercentage1.innerHTML + 10;
-      lifeBar1.style.width = (lifeBar1.style.width.split("px", 1) + (life1*0.1))+"px";
+    if(lifePercentage1.innerHTML < 100 && lifePercentage2.innerHTML < 100){
+      lifePercentage1.innerHTML = Number(lifePercentage1.innerHTML) + 10;
+      lifePercentage2.innerHTML = Number(lifePercentage2.innerHTML) + 10;
+      
+      lifeBar1.style.width = Number(lifeBar1.style.width.split("px", 1)) + (life1*0.1)+"px";
+      lifeBar2.style.width = Number(lifeBar2.style.width.split("px", 1)) + (life2*0.1)+"px";
     }
     time += 2;
     combination = false;
@@ -87,10 +93,18 @@ function timeToPlay() {
       if(lifePercentage1.innerHTML > 10 && lifePercentage2.innerHTML > 10){
         lifePercentage1.innerHTML = lifePercentage1.innerHTML - 10;
         lifeBar1.style.width = (lifeBar1.style.width.split("px", 1) - (life1*0.1))+"px";
+
+        lifePercentage2.innerHTML = lifePercentage2.innerHTML - 10;
+        lifeBar2.style.width = (lifeBar2.style.width.split("px", 1) - (life2*0.1))+"px";
+        
         time = 5;
       }else{
         lifePercentage1.innerHTML = lifePercentage1.innerHTML - 10;
         lifeBar1.style.width = lifePercentage1.innerHTML+"px";
+        
+        lifePercentage2.innerHTML = lifePercentage2.innerHTML - 10;
+        lifeBar2.style.width = lifePercentage2.innerHTML+"px";
+        
         console.log("GAME OVER!");
         clearInterval(end);
       }
@@ -215,9 +229,9 @@ function drawPanel() {
         x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
-          // ctx.font = "15px Quicksand";
-          // ctx.fillStyle = "black";
-          // ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
+          ctx.font = "15px Quicksand";
+          ctx.fillStyle = "black";
+          ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
       };
       
       aux++;
@@ -241,9 +255,9 @@ function drawPanel() {
         x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
-            // ctx.font = "15px Quicksand";
-            // ctx.fillStyle = "black";
-            // ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
+            ctx.font = "15px Quicksand";
+            ctx.fillStyle = "black";
+            ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
           
         };
     }
@@ -255,30 +269,28 @@ function drawPanel() {
 function generateNumGem(i) {
   let num = Math.floor(Math.random()*4);
   
-  while(panel.length > 1 &&  // 25 > 1 |||| SI EL PANEL TIENE MAS DE UNA GEMA
-    (panel.length + 2) % x_dimention !== 0 && // 25 +  |||| Y  
-      (panel[i + 1] !== undefined &&
-        panel[i + 1].name === gems[num].name) && 
-      (panel[i + 2] !== undefined &&
-        panel[i + 2].name === gems[num].name) 
-    ||
-    (panel.length - 1) % x_dimention !== 0 && // 24 % 5 != 0
-      (panel[i - 1] !== undefined &&
-        panel[i - 1].name === gems[num].name) && 
-      (panel[i - 2] !== undefined &&
-        panel[i - 2].name === gems[num].name)
-    ||
-    panel.length >= (x_dimention * 2) && // 25 >= 10
-      (panel[i + x_dimention] !== undefined &&
-        panel[i + x_dimention].name === gems[num].name) ||
-      (panel[i + (x_dimention * 2)] !== undefined &&
-        panel[i + (x_dimention * 2)].name === gems[num].name)
-    ||
-    panel.length < Math.floor(panel.length - (x_dimention * 2)) && 
-      (panel[i - x_dimention] !== undefined &&
-        panel[i - x_dimention].name === gems[num].name) ||
-      (panel[i - (x_dimention * 2)] !== undefined && 
-        panel[i - (x_dimention * 2)].name === gems[num].name)
+  while(panel.length > 1 &&  // MIENTRAS EL PANEL TENGA MAS DE UNA GEMA
+    (panel[i + 2] !== undefined && // Y DOS GEMAS MAS ADELANTE EN EL ARRAY DE LA QUE ESTOY ACTUALMENTE NO SEA INDEFINIDO
+      panel[i + 2] % x_dimention !== 0 && // Y DOS GEMAS ADELANTE DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY NO SEA DIVISIBLE POR 5 | ESTO EVITA COMPROBAR INNECESARIAMENTE
+      panel[i + 1].name === gems[num].name && // Y UNA GEMA MAS ADELANTE EN EL ARRAY DE LA QUE ESTOY ACTUALMENTE SEA IGUAL A LA GEMA GENERADA ALEATORIAMENTE
+      panel[i + 2].name === gems[num].name) || // Y DOS GEMA MAS ADELANTE EN EL ARRAY DE LA QUE ESTOY ACTUALMENTE SEA IGUAL A LA GEMA GENERADA ALEATORIAMENTE | AMBAS i+2 y i+1 DEBEN DE COINCIDIR PARA QUE EXISTA UNA POSIBLE COMBINACION Y SE NECESITE GENERAR OTRA GEMA
+      
+      
+    //             O    SI NO HAY COINCIDENCIA COMPRUEBA EN LA SIGUIENTE DIRECCION.....
+    (panel[i - 2] !== undefined && // Y DOS GEMAS HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY NO SEA INDEFINIDO
+      panel[i - 1] % x_dimention !== 0 && // Y UNA GEMA HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY NO ES DIVISIBLE POR 5 | ESTO EVITA COMPROBAR INNECESARIAMENTE
+      panel[i - 1].name === gems[num].name && // Y UNA GEMA HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY SEA IGUAL A LA GEMA GENERADA ALEATORIAMENTE
+      panel[i - 2].name === gems[num].name) || // Y DOS GEMAS HACIA ATRAS DE LA QUE ESTOY ACTUALMENTE EN EL ARRAY SEA IGUAL A LA GEMA GENERADA ALEATORIAMENTE
+      
+      
+    //            O    SI NO HAY COINCIDENCIA COMPRUEBA EN LA SIGUIENTE DIRECCION.....
+    (panel[i + (x_dimention * 2)] !== undefined &&
+      panel[i + x_dimention].name === gems[num].name &&
+      panel[i + (x_dimention * 2)].name === gems[num].name) ||
+    //            O    SI NO HAY COINCIDENCIA COMPRUEBA EN LA SIGUIENTE DIRECCION.....
+    (panel[i - (x_dimention * 2)] !== undefined && 
+      panel[i - x_dimention].name === gems[num].name &&
+      panel[i - (x_dimention * 2)].name === gems[num].name)
     )
     {
           
@@ -328,13 +340,14 @@ function checkGems(panel,gemSelected,gemIndex){
 	let gemToChangeConsecutiveX = 1;
 	let gemConsecutiveY = 1;
   let gemToChangeConsecutiveY = 1;
-  let gemClicked = 0;
+  let gemSelectedClicked = 0;
+  let gemToChangeClicked = 0;
 	
 	// CHECK TO THE RIGHT
 	for (let i = 1; i < 3; i++) {
 		if( ( ((gemIndex + i) % x_dimention !== 0) && ((gemIndex + i) < panel.length) && gemConsecutiveX != 0 ) && panel[gemIndex+i].name === gemSelected.name){
-			gemConsecutiveX++;
-			findARow(i,(gemIndex + i),gemSelected);
+      gemConsecutiveX++;
+			findARow(i,(gemIndex + i),gemSelected, gemSelectedClicked);
 		}
 		if( ( ((indexToChange + i) % x_dimention !== 0) && ((indexToChange + i) < panel.length) && gemToChangeConsecutiveX != 0) && panel[indexToChange+i].name === gemToChange.name){
 			gemToChangeConsecutiveX++;
@@ -391,7 +404,7 @@ function checkGems(panel,gemSelected,gemIndex){
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// CHECK TO DOWN
-	for(let i = x_dimention, aux = 1; i <= 10; i+=x_dimention, aux++) {
+	for(let i = x_dimention, aux = 1; aux < 3; i+=x_dimention, aux++) {
 		if( (gemIndex + i) < panel.length && gemConsecutiveY != 0 && panel[gemIndex+i].name === gemSelected.name){
 			gemConsecutiveY++;
 			findARow(aux,(gemIndex + i),gemSelected);
@@ -401,7 +414,7 @@ function checkGems(panel,gemSelected,gemIndex){
 			findARow(aux,(indexToChange + i),gemToChange);
     } 
     if(gemConsecutiveY === 1 && gemToChangeConsecutiveY === 1){
-      i = panel.length;
+      aux = 3;
     }else{
       if(gemConsecutiveY === 1){
         gemConsecutiveY = 0;  
@@ -416,7 +429,7 @@ function checkGems(panel,gemSelected,gemIndex){
   counterReset();
   
 	// CHECK TO UP
-	for(let i = x_dimention, aux = 1; i <= 10; i+=x_dimention, aux++){
+	for(let i = x_dimention, aux = 1; aux < 3; i+=x_dimention, aux++){
 		if( panel[gemIndex-i] !== undefined && gemConsecutiveY != 0 && panel[gemIndex-i].name === gemSelected.name){
 			gemConsecutiveY++;
 			findARow(aux,(gemIndex-i),gemSelected);
@@ -426,7 +439,7 @@ function checkGems(panel,gemSelected,gemIndex){
 			findARow(aux,(indexToChange-i),gemToChange);
     }
     if(gemConsecutiveY === 1 && gemToChangeConsecutiveY === 1){
-      i = panel.length;
+      aux = 3;
     }else{
       if(gemConsecutiveY === 1){
         gemConsecutiveY = 0; 
@@ -455,9 +468,13 @@ function checkGems(panel,gemSelected,gemIndex){
 		// 	gemConsecutiveX = 1;
 		// 	gemToChangeConsecutiveX = 1;
     // }
-    if(i === 1 && gemClicked === 0 && gemDelete.length > 0){
+    if(i === 1 && (gemSelectedClicked === 0 || gemToChangeClicked === 0) && gemDelete.length > 0){
       gemDelete.push({ name:gemSel.name, img:gemSel.img, positionX:gemSel.positionX, positionY:gemSel.positionY });
-      gemClicked = 1;
+      gemSelectedClicked++;
+    //   if(gemSelectedClicked === false)
+    //     gemSelectedClicked = true;
+    //   else if()
+    //     gemToChangeClicked = true;
     }
 		//  return i;
   }
@@ -540,22 +557,28 @@ function removeGem() {
       if(element.positionX === panel[i].positionX && element.positionY === panel[i].positionY){
         // RESET THE NAME TO FIND A NEW RANDOM GEMS
         panel[i].name = ""; 
-        num = generateNumGem(i);
         // const x = new Image();
         // x.src = gems[num].img;
-        panel[i].name = gems[num].name; // GEM COLOR 
-        panel[i].img = gems[num].img;  // GEM ADDRESS
+        
       }  
     }
     
   });
+  panel.forEach(function(element,index) {
+    var num = 0;
+    if(element.name === ""){
+      num = generateNumGem(index);
+      panel[index].name = gems[num].name; // GEM COLOR 
+      panel[index].img = gems[num].img;  // GEM ADDRESS
+    }
+  });
 
-  setTimeout(() => {
+  setTimeout( function() {
     drawPanel();
   }, 300);
   if(gemDelete.length !== 0){
     combination = true;
-    timeToPlay();
+    // timeToPlay();
   }
   
 }
