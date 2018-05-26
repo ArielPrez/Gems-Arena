@@ -6,13 +6,15 @@ var gems = [
   { name: 'yellow',        img: 'images/gems/yellow.jpg'},
   ];
 // ARRAY DE CHARACTERS
-var characters = [
+var charactersMen = [
   { name: 'mage1',           img: 'images/characters/mage-left1.jpg',           side:'left'},
   { name: 'mage2',           img: 'images/characters/mage-left2.jpg',           side:'left'},      
   { name: 'mage3',           img: 'images/characters/mage-left3.jpg',           side:'left'},
   { name: 'mage4',           img: 'images/characters/mage-right1.jpg',          side:'right'},
   { name: 'mage5',           img: 'images/characters/mage-right2.jpg',          side:'right'},
   { name: 'mage6',           img: 'images/characters/mage-right3.jpg',          side:'right'},
+];
+var charactersWomen = [
   { name: 'sorcerer1',       img: 'images/characters/sorcerer-left1.jpg',       side:'left'},
   { name: 'sorcerer2',       img: 'images/characters/sorcerer-left2.jpg',       side:'left'},
   { name: 'sorcerer3',       img: 'images/characters/sorcerer-left3.jpg',       side:'left'},
@@ -32,7 +34,9 @@ var characters = [
   let time=11;
   let combination = false;
   let life1,life2;
-  let end;
+  let presentation = true;
+  let end = "";
+  let player = true; // ====> FIRST PLAYER START THE GAME
   //          [ COMB OF 3],[COMB OF 4],[COMB OF 5]
   let combinationQuantity = [0,0,0]; // => THIS SAVE THE NUMBER OF COMBINATIONS MADE EACH TIME AND THE QUANTITY OF EACH COMBINATION.
 
@@ -53,6 +57,7 @@ var mouse = {
 // HTML ELEMENTS FOR A DYNAMIC SIZE
   var canvas = document.querySelector("canvas");
   var ctx = canvas.getContext("2d");
+  var image = document.getElementsByClassName("image")[0];
   var player1 = document.getElementsByClassName("character1")[0];
   var player2 = document.getElementsByClassName("character2")[0];
   var lifeChar1 = document.getElementsByClassName("life1")[0];
@@ -61,28 +66,80 @@ var mouse = {
   var lifeBar2 = document.getElementsByClassName("lifeChar2")[0];
   var lifePercentage1 = document.getElementsByClassName("lifePercentage1")[0];
   var lifePercentage2 = document.getElementsByClassName("lifePercentage2")[0];
-  // var x = document.querySelector("character1 myImg").src;
-  // document.getElementById("demo").innerHTML = x;
-
+  var p = document.getElementsByClassName("presentation")[0];
+  var p1 = document.getElementById("player1").getElementsByTagName("input")[0].value;
+  var p2 = document.getElementById("player2").getElementsByTagName("input")[0].value;
+  var myImage1,myImage2;
 // START OF THE GAME
 window.onload = function(){
-  // elemLeft = canvas.offsetLeft;
-  // elemTop = canvas.offsetTop;
-
-  startGame();
-
+  measureBlockPage();
+  drawPanel();
 };
-
+function startPresentation() {
+  let num = Math.floor(Math.random()*6);
+  while(num === 3 || num === 4 || num === 5){
+    num = Math.floor(Math.random()*6);
+  }
+  // ASSIGNING IMAGE FIRST PLAYER
+  if(document.getElementsByClassName("radioP1")[0].checked){
+    myImage1.src = charactersMen[num].img;
+    document.body.getElementsByClassName("character1")[0].appendChild(myImage1);
+  }else if(document.getElementsByClassName("radioP1")[1].checked){
+    myImage1.src = charactersWomen[num].img;
+    document.body.getElementsByClassName("character1")[0].appendChild(myImage1);
+  }
+  num = Math.floor(Math.random()*6);
+  while(num === 0 || num === 1 || num === 2){
+    num = Math.floor(Math.random()*6);
+  }
+  // ASSIGNING IMAGE SECOND PLAYER
+  if(document.getElementsByClassName("radioP2")[0].checked){
+    myImage2.src = charactersMen[num].img;
+    document.body.getElementsByClassName("character2")[0].appendChild(myImage2);
+  }else if(document.getElementsByClassName("radioP2")[1].checked){
+    myImage2.src = charactersWomen[num].img;
+    document.body.getElementsByClassName("character2")[0].appendChild(myImage2);
+  }
+  
+  p1 = document.getElementById("player1").getElementsByTagName("input")[0].value;
+  p2 = document.getElementById("player2").getElementsByTagName("input")[0].value;
+  document.getElementsByClassName("name1")[0].innerHTML = p1;
+  document.getElementsByClassName("name2")[0].innerHTML = p2;
+  document.getElementById("playerTurn").innerHTML = p1;
+  p.style.display = 'none';
+  presentation = false;
+  startGame();
+  
+}
 // THIS MODIFIED THE TIMER OF THE GAME EVERY SECOND
 function timeToPlay() {
   if (combination) {
-    if(lifePercentage1.innerHTML < 100 && lifePercentage2.innerHTML < 100){
-      lifePercentage1.innerHTML = Number(lifePercentage1.innerHTML) + 10;
-      lifePercentage2.innerHTML = Number(lifePercentage2.innerHTML) + 10;
-      
-      lifeBar1.style.width = Number(lifeBar1.style.width.split("px", 1)) + (life1*0.1)+"px";
-      lifeBar2.style.width = Number(lifeBar2.style.width.split("px", 1)) + (life2*0.1)+"px";
+    if (player === true) { // ====> FIRST PLAYER'S TURN
+      if(lifePercentage1.innerHTML < 100){
+        lifePercentage1.innerHTML = Number(lifePercentage1.innerHTML) + 10;
+        lifeBar1.style.width = Number(lifeBar1.style.width.split("px", 1)) + (life1*0.1)+"px";
+      }
+      lifePercentage2.innerHTML = lifePercentage2.innerHTML - 10;
+      lifeBar2.style.width = (lifeBar2.style.width.split("px", 1) - (life2*0.1))+"px";
+      player = false;
+      document.getElementById("playerTurn").innerHTML = p2; // ==> UPDATE THE NAME OF THE CURRENT PLAYER
+    }else{                // ====> SECOND PLAYER'S TURN
+      if(lifePercentage2.innerHTML < 100){
+        lifePercentage2.innerHTML = Number(lifePercentage2.innerHTML) + 10;
+        lifeBar2.style.width = Number(lifeBar2.style.width.split("px", 1)) + (life2*0.1)+"px";
+      }
+      lifePercentage1.innerHTML = lifePercentage1.innerHTML - 10;
+      lifeBar1.style.width = (lifeBar1.style.width.split("px", 1) - (life1*0.1))+"px";
+      player = true;
+      document.getElementById("playerTurn").innerHTML = p1; // ==> UPDATE THE NAME OF THE CURRENT PLAYER
     }
+    // if(lifePercentage1.innerHTML < 100 && lifePercentage2.innerHTML < 100){
+    //   lifePercentage1.innerHTML = Number(lifePercentage1.innerHTML) + 10;
+    //   lifePercentage2.innerHTML = Number(lifePercentage2.innerHTML) + 10;
+      
+    //   lifeBar1.style.width = Number(lifeBar1.style.width.split("px", 1)) + (life1*0.1)+"px";
+    //   lifeBar2.style.width = Number(lifeBar2.style.width.split("px", 1)) + (life2*0.1)+"px";
+    // }
     time += 2;
     combination = false;
   }
@@ -91,93 +148,109 @@ function timeToPlay() {
       time -=1;
     }else{
       if(lifePercentage1.innerHTML > 10 && lifePercentage2.innerHTML > 10){
-        lifePercentage1.innerHTML = lifePercentage1.innerHTML - 10;
-        lifeBar1.style.width = (lifeBar1.style.width.split("px", 1) - (life1*0.1))+"px";
-
-        lifePercentage2.innerHTML = lifePercentage2.innerHTML - 10;
-        lifeBar2.style.width = (lifeBar2.style.width.split("px", 1) - (life2*0.1))+"px";
-        
+        if (player === true) {
+          // ====> FIRST PLAYER'S TURN
+          lifePercentage1.innerHTML = lifePercentage1.innerHTML - 10;
+          lifeBar1.style.width = (lifeBar1.style.width.split("px", 1) - (life1*0.1))+"px";            
+        }else{                
+          // ====> SECOND PLAYER'S TURN
+          lifePercentage2.innerHTML = lifePercentage2.innerHTML - 10;
+          lifeBar2.style.width = (lifeBar2.style.width.split("px", 1) - (life2*0.1))+"px";
+        }
         time = 5;
       }else{
         lifePercentage1.innerHTML = lifePercentage1.innerHTML - 10;
-        lifeBar1.style.width = lifePercentage1.innerHTML+"px";
-        
+        lifeBar1.style.width = (lifeBar1.style.width.split("px", 1) - (life1*0.1))+"px";
         lifePercentage2.innerHTML = lifePercentage2.innerHTML - 10;
-        lifeBar2.style.width = lifePercentage2.innerHTML+"px";
-        
+        lifeBar2.style.width = (lifeBar2.style.width.split("px", 1) - (life2*0.1))+"px";
         console.log("GAME OVER!");
         clearInterval(end);
-      }
-      
-
-      
+        end = "";
+        presentation = true;
+        time = 0;
+        startGame();
+      } 
     }
-    
+    combination = false;
   }
   document.getElementById("countdowntimer").innerHTML = time;
 }
 
 // FUNCTION TO START THE GAME AND CLICS CONTROL OVER THE CANVAS/PANEL 
 function startGame(){
-  measureBlockPage();
-  drawPanel();
-
   
-  // CALL THE FUNCTION "timeToPlay()" EVERY SECOND TO MODIFIED THE TIMER
-  end = setInterval(timeToPlay,1000);
-    
-  
-  function myFunction() {
-    document.getElementsByTagName("INPUT")[0].setAttribute("type", "button"); 
-  
-  }
-
-  // ADD EVENT LISTENER FOR CLICK EVENTS
-  canvas.addEventListener('click',function(event){
-    // console.log("PANEL", panel);
-    // console.log('EVENT: X - ', event.offsetX + '   Y - ', event.offsetY );
-    mouse.x = event.offsetX;
-    mouse.y = event.offsetY;
-
-    panel.forEach(function(panel,i){
-      
-      if(mouse.x > panel.positionX &&
-          mouse.y > panel.positionY){
-            gemSelected = panel;
-            gemIndex = i;
-      }
-          
-    });
-    if(clickCounter === 0){
-      gemToChange = gemSelected;
-      indexToChange = gemIndex;
-      circle(gemSelected.positionX,gemSelected.positionY);
-      clickCounter++;
-    }else{
-      circle(gemSelected.positionX,gemSelected.positionY);
-      if((gemIndex+1 === indexToChange || gemIndex-1 === indexToChange || gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange) && 
-        ((((gemIndex + 1) % x_dimention !== 0 && (gemIndex - 1) % x_dimention !== x_dimention - 1) ||
-            (gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange)
-        ) ||
-        (((indexToChange + 1) % x_dimention !== 0 && (indexToChange - 1) % x_dimention !== x_dimention - 1) ||
-           (gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange)))){
-              moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange);
-              checkGems(panel,gemSelected,gemIndex);
-      }else{
-        setTimeout(() => {
-          drawPanel();
-        }, 300);
-      }
-      clickCounter = 0;
+  if (presentation === true) {
+    if (p.style.display === 'none') {
+      p.style.display = 'block';
+    } 
+    var h = document.createElement("H1");
+    var text = document.createTextNode("- GAME OVER -");
+    if(lifePercentage1.innerHTML < 10){
+      text = document.createTextNode("- " + p2 + " WON! -");
+    }else if(lifePercentage2.innerHTML < 10){
+      text = document.createTextNode("- " + p1 + " WON! -");
     }
     
-  },false);
+    h.appendChild(text);
+    document.body.getElementsByClassName("image")[0].appendChild(h);
+    // presentation = false;
+  }else{ // ====>  presentation IS FALSE, SO START THE GAME
+    // CALL THE FUNCTION "timeToPlay()" EVERY SECOND TO MODIFIED THE TIMER
+    end = setInterval(timeToPlay,1000);
+    
+  
+    // ADD EVENT LISTENER FOR CLICK EVENTS
+    canvas.addEventListener('click',function(event){
+      mouse.x = event.offsetX;
+      mouse.y = event.offsetY;
+  
+      panel.forEach(function(panel,i){
+        if(mouse.x > panel.positionX &&
+            mouse.y > panel.positionY){
+              gemSelected = panel;
+              gemIndex = i;
+        }
+            
+      });
+      if(clickCounter === 0){
+        gemToChange = gemSelected;
+        indexToChange = gemIndex;
+        circle(gemSelected.positionX,gemSelected.positionY);
+        clickCounter++;
+      }else{
+        circle(gemSelected.positionX,gemSelected.positionY);
+        if((gemIndex+1 === indexToChange || gemIndex-1 === indexToChange || gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange) && 
+          ((((gemIndex + 1) % x_dimention !== 0 && (gemIndex - 1) % x_dimention !== x_dimention - 1) ||
+              (gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange)
+          ) ||
+          (((indexToChange + 1) % x_dimention !== 0 && (indexToChange - 1) % x_dimention !== x_dimention - 1) ||
+             (gemIndex+x_dimention === indexToChange || gemIndex-x_dimention === indexToChange)))){
+                moveGems(panel,gemSelected,gemToChange,gemIndex,indexToChange);
+                checkGems(panel,gemSelected,gemIndex);
+        }else{
+          setTimeout(() => {
+            drawPanel();
+          }, 300);
+        }
+        clickCounter = 0;
+      }
+      
+    },false);  
+  
+  }
 }
 
 // MEASURE THE ELEMENTS OF THE SCREEN
 function measureBlockPage() {
   // mage-left2.jpg
   // sorcerer-right3.jpg
+
+  // image.width = Math.floor((document.getElementById('myBody').offsetWidth / 3));
+  image.height = Math.floor(window.innerHeight / 1.5)+10; //Math.floor((document.getElementById('myBody').offsetWidth / 3)+50);
+  image.style.width = (Math.floor((document.getElementById('myBody').offsetWidth)) - Math.floor((document.getElementById('myBody').offsetWidth) * 0.07)+20)+"px";
+  image.style.height = image.height+"px";
+  image.getElementsByTagName("img")[0].style.width = image.style.width;
+  image.getElementsByTagName("img")[0].style.height = image.style.height;
 
   canvas.width = Math.floor((document.getElementById('myBody').offsetWidth / 3));
   canvas.height = Math.floor((document.getElementById('myBody').offsetWidth / 3));
@@ -204,13 +277,10 @@ function measureBlockPage() {
   lifeChar2.style.width = lifeBar2.style.width;
   life2 = lifeBar2.style.width.split("px", 1);
 
-  var myImage1 = new Image(player1.width, player1.height);
-  myImage1.src = characters[Math.floor(Math.random()*3)].img;
-  document.body.getElementsByClassName("character1")[0].appendChild(myImage1);
-
-  var myImage2 = new Image(player2.width, player2.height);
-  myImage2.src = characters[Math.floor(Math.random()*6)].img;
-  document.body.getElementsByClassName("character2")[0].appendChild(myImage2);
+  myImage1 = new Image(player1.width, player1.height);
+  myImage2 = new Image(player2.width, player2.height);
+  // var gender = Math.floor(Math.random());
+  
 }
 
 // DRAW A PANEL OF GEMS
@@ -236,9 +306,10 @@ function drawPanel() {
         x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
-          ctx.font = "15px Quicksand";
-          ctx.fillStyle = "black";
-          ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
+          // DRAW THE COORDINATES ABOVE EACH GEM
+          // ctx.font = "15px Quicksand";
+          // ctx.fillStyle = "black";
+          // ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
       };
       
       aux++;
@@ -262,9 +333,10 @@ function drawPanel() {
         x.onload = () =>
         {
           ctx.drawImage(x,j*calculation,q*calculation,calculation,calculation);
-            ctx.font = "15px Quicksand";
-            ctx.fillStyle = "black";
-            ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
+          // DRAW THE COORDINATES ABOVE EACH GEM
+            // ctx.font = "15px Quicksand";
+            // ctx.fillStyle = "black";
+            // ctx.fillText(panel[i].positionX + "-" + panel[i].positionY,panel[i].positionX + 10,panel[i].positionY + 35);
           
         };
     }
@@ -574,7 +646,7 @@ function removeGem() {
   }, 300);
   if(gemDelete.length !== 0){
     combination = true;
-    // timeToPlay();
+    timeToPlay();
   }
   
 }

@@ -8,43 +8,34 @@ body{
   background-image: url("images/fantasy-background.jpg");
   background-repeat: no-repeat;
   background-size: 100%;
-  background-position-y: top;
 }
 
 .countdowntimer{
+  font-stretch: expanded;
   margin: 10px 0px 0px 36%;
   padding: 1% 0 0 1%;
   color: silver;
-  width: 300px;
+  width: 25%;
   height: 60px;
-  border: 5px solid silver;
+  border: 3px solid silver;
   border-radius: 20px;
-  font-size: 30px;
+  font-size: 20px;
 }
-
 .countdowntimer span{
   display: inline;
-  margin: 0 0 0 10%;
-  font-size: 40px;
+  margin: 0 0 0 0px;
+  font-size: 24px;
   /* width: 70px; ===> has no effect */ 
-  text-align: right;
+  text-align: center;
   color: rgb(241, 240, 172);
 }
 
 .info{
-  height: 100px;
+  height: 10%;
   width: 100%;
   float: left;
   background: linear-gradient(black,rgba(42, 52, 54, 0.8));
 }
-/* .info img{
-  
-  src: url();
-  opacity: 0.5;
-    filter: alpha(opacity=50);
-    background-size: 100% 330px;
-  background-position-y: center; 
-} */
 .info::after {
   content: "";
   background: url("images/cool-pc-backgrounds.jpg");
@@ -59,42 +50,106 @@ body{
   background-position-y: top;
   background-repeat: no-repeat;
 }
-
-/* #main{
-  margin-left: 10%;
-  text-align: center;
+.info p{
+  display: inline;
+}
+.playerTurn{
+  padding: 0px 0px 0px 10px;
+}
+/* 
+#main{
+  display: inline;
 } */
+.presentation{
+  position: absolute;
+  margin: 10% 0 0 1.8%;
+  display: block;
+}
+#playersName{
+  color: aliceblue;
+  z-index: 3;
+  position: absolute;
+  display: inline;
+  margin: 100px 0 0 15%;
+}
+#player1, #player2{
+  position: relative;
+  float: left;
+  color: rgb(241, 240, 172);
+
+}
+
+input{
+  padding: 5px 5px 5px 0px;
+  margin: 10px 0px 5px 0px;
+  size: 50px;
+  border: 1px solid rgb(241, 240, 172);
+  border-radius: 3px;
+  background-color: azure;
+}
+.radioP1, .radioP2{
+  position: relative;
+  /* float: right; */
+}
+
+#play{
+  position: relative;
+  float: left;
+  /* display: inline; */
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 15px 30px 15px 30px;
+  margin: 1% 180px 0 180px;
+  border: 1px solid rgb(241, 240, 172);
+  border-radius: 6px;
+  color: azure;
+  background-color: rgba(42, 52, 54, 0.8);
+}
+.image{
+  position: absolute;
+  border: 3px solid silver;
+  border-radius: 20px;
+  background-color: black;
+  padding: 5px 5px 5px 5px;
+  /* margin-left: -8px; */
+  margin: 0% 0 0 2%;
+  z-index: 2;
+}
+
 .gems{
   float: left;
-  /* z-index: 0; */
+  z-index: 0;
 }
 #gems{
-  border: 5px solid silver;
+  border: 3px solid silver;
   border-radius: 20px;
   background-color: white;
   padding: 5px 3px 3px 5px;
   /* margin-left: -8px; */
   margin: 8% 0 0 5%;
+  z-index: 3;
+  display: inline-block;
 }
 .character1{
-  background-color: rgba(42, 52, 54, 0.8);
-  border: 5px solid silver;
-  border-radius: 10px;
+  position: relative;
   float: left;
+  background-color: rgba(42, 52, 54, 0.8);
+  border: 3px solid silver;
+  border-radius: 10px;
   text-align: center;
-  padding: 4px 3px 0px 3px;
-  margin-top: 1%;
+  padding: 4px 4px 4px 4px;
+  margin-top: 3%;
   margin-left: 2%;
   /* width: 300px; */
 }
 .character2{
   background-color: rgba(42, 52, 54, 0.8);
-  border: 5px solid silver;
+  border: 3px solid silver;
   border-radius: 10px;
   float: left;
   text-align: center;
-  padding: 4px 3px 0px 3px;
-  margin-top: 1%;
+  padding: 4px 4px 4px 4px;
+  margin-top: 3%;
   margin-left: 3.5%;
   /* width: 300px; */
 }
